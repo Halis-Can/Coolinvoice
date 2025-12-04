@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EstimateView: View {
     @State private var estimates: [Estimate] = Estimate.sampleEstimates
+    @Binding var invoices: [Invoice]
     @State private var selectedSegment: EstimateSegment = .pending
     @State private var searchText = ""
     @State private var showingNewEstimate = false
@@ -65,7 +66,11 @@ struct EstimateView: View {
                 } else {
                     ForEach(filteredEstimates) { estimate in
                         NavigationLink {
-                            PDFEstimateView(estimate: estimate)
+                            PDFEstimateView(estimate: estimate, invoices: $invoices) { updatedEstimate in
+                                if let index = estimates.firstIndex(where: { $0.id == updatedEstimate.id }) {
+                                    estimates[index] = updatedEstimate
+                                }
+                            }
                         } label: {
                             EstimateRow(estimate: estimate)
                         }
@@ -130,9 +135,19 @@ struct EstimateRow: View {
                     .font(.headline)
                     .foregroundStyle(.primary)
                 
-                Text(estimate.estimateNumber)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    Text(estimate.estimateNumber)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text("•")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(estimate.date, format: .dateTime.month().day().year())
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
             
             Spacer()
@@ -312,7 +327,7 @@ struct EstimateInfoRow: View {
 
 #Preview {
     NavigationStack {
-        EstimateView()
+        EstimateView(invoices: .constant([]))
     }
 }
 

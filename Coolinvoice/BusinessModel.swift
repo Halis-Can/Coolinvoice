@@ -15,17 +15,20 @@ import Combine
 struct Business: Codable {
     var name: String
     var address: String
+    var phoneNumber: String
     var licenseNumber: String
     var logoImageData: Data?
     
     init(
         name: String = "",
         address: String = "",
+        phoneNumber: String = "",
         licenseNumber: String = "",
         logoImageData: Data? = nil
     ) {
         self.name = name
         self.address = address
+        self.phoneNumber = phoneNumber
         self.licenseNumber = licenseNumber
         self.logoImageData = logoImageData
     }

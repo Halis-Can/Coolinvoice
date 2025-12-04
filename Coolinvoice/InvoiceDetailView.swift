@@ -228,8 +228,8 @@ struct InvoiceDetailView: View {
                 // Update invoice amount based on items
                 let subtotal = invoice.items.reduce(0) { $0 + $1.total }
                 invoice.amount = subtotal
-                // Recalculate tax (assuming 9% tax rate, can be made configurable)
-                invoice.tax = subtotal * 0.09
+                // Recalculate tax using configured tax rate
+                invoice.tax = TaxSettingsManager.shared.calculateTax(for: subtotal)
             }
         }
     }

@@ -29,6 +29,14 @@ struct Invoice: Identifiable, Codable, Equatable {
     var notes: String
     var paymentMethod: PaymentMethod?
     var paidDate: Date?
+    var paymentAmount: Double?
+    
+    var remainingAmount: Double {
+        guard let paymentAmount = paymentAmount else {
+            return total
+        }
+        return max(0, total - paymentAmount)
+    }
     
     init(
         id: UUID = UUID(),
@@ -45,7 +53,8 @@ struct Invoice: Identifiable, Codable, Equatable {
         items: [InvoiceItem] = [],
         notes: String = "",
         paymentMethod: PaymentMethod? = nil,
-        paidDate: Date? = nil
+        paidDate: Date? = nil,
+        paymentAmount: Double? = nil
     ) {
         self.id = id
         self.invoiceNumber = invoiceNumber
@@ -62,6 +71,7 @@ struct Invoice: Identifiable, Codable, Equatable {
         self.notes = notes
         self.paymentMethod = paymentMethod
         self.paidDate = paidDate
+        self.paymentAmount = paymentAmount
     }
     
     static func == (lhs: Invoice, rhs: Invoice) -> Bool {
@@ -79,7 +89,8 @@ struct Invoice: Identifiable, Codable, Equatable {
         lhs.items == rhs.items &&
         lhs.notes == rhs.notes &&
         lhs.paymentMethod == rhs.paymentMethod &&
-        lhs.paidDate == rhs.paidDate
+        lhs.paidDate == rhs.paidDate &&
+        lhs.paymentAmount == rhs.paymentAmount
     }
 }
 

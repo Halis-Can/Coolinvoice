@@ -12,6 +12,8 @@ struct EditInvoiceView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingAddItem = false
     @State private var showingOrganizeItems = false
+    @State private var clientPhoneText: String = ""
+    @FocusState private var isPhoneFocused: Bool
     let onSave: () -> Void
     
     var body: some View {
@@ -35,16 +37,33 @@ struct EditInvoiceView: View {
                 
                 Section {
                     TextField("Name", text: $invoice.clientName)
+                        .textContentType(.name)
+                        .autocapitalization(.words)
                     
-                    TextField("Phone Number", text: $invoice.clientPhone)
+                    TextField("Phone Number", text: $clientPhoneText)
                         .keyboardType(.phonePad)
+                        .textContentType(.telephoneNumber)
+                        .focused($isPhoneFocused)
+                        .onChange(of: isPhoneFocused) { oldValue, newValue in
+                            // Format when focus is lost
+                            if !newValue && oldValue {
+                                let formatted = PhoneNumberFormatter.formatPhoneNumber(clientPhoneText)
+                                clientPhoneText = formatted
+                                invoice.clientPhone = formatted
+                            }
+                        }
                     
                     TextField("Email", text: $invoice.clientEmail)
                         .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                         .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
                     
                     TextField("Address", text: $invoice.clientAddress, axis: .vertical)
-                        .lineLimit(3...5)
+                        .lineLimit(3...10)
+                        .textContentType(.fullStreetAddress)
+                        .autocapitalization(.words)
                 } header: {
                     Text("Client Information")
                 }
@@ -96,6 +115,10 @@ struct EditInvoiceView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        // Format phone number before saving
+                        let formatted = PhoneNumberFormatter.formatPhoneNumber(clientPhoneText)
+                        clientPhoneText = formatted
+                        invoice.clientPhone = formatted
                         updateTotals()
                         onSave()
                     }
@@ -111,13 +134,16 @@ struct EditInvoiceView: View {
             .sheet(isPresented: $showingOrganizeItems) {
                 OrganizeItemsView(items: $invoice.items)
             }
+            .onAppear {
+                clientPhoneText = invoice.clientPhone
+            }
         }
     }
     
     private func updateTotals() {
         let subtotal = invoice.items.reduce(0) { $0 + $1.total }
         invoice.amount = subtotal
-        invoice.tax = subtotal * 0.09
+        invoice.tax = TaxSettingsManager.shared.calculateTax(for: subtotal)
         // total is computed property: amount + tax, so it updates automatically
     }
 }

@@ -59,25 +59,14 @@ class PDFRenderer {
                 yPosition: yPosition
             )
             
-            yPosition += 20
-            
-            // Totals
-            yPosition = drawTotals(
+            // Totals - positioned at the bottom of the page
+            let totalsHeight: CGFloat = invoice.status == .paid ? 140 : 80 // More space if paid
+            let totalsYPosition = a4Height - pageMargin - totalsHeight
+            drawTotals(
                 context: context,
                 invoice: invoice,
-                yPosition: yPosition
+                yPosition: totalsYPosition
             )
-            
-            yPosition += 20
-            
-            // Notes
-            if !invoice.notes.isEmpty {
-                drawNotes(
-                    context: context,
-                    notes: invoice.notes,
-                    yPosition: yPosition
-                )
-            }
         }
         
         return PDFDocument(data: data) ?? PDFDocument()
@@ -127,25 +116,14 @@ class PDFRenderer {
                 yPosition: yPosition
             )
             
-            yPosition += 30 // Increased spacing before totals
-            
-            // Totals
-            yPosition = drawEstimateTotals(
+            // Totals - positioned at the bottom of the page
+            let totalsHeight: CGFloat = 80 // Height including padding
+            let totalsYPosition = a4Height - pageMargin - totalsHeight
+            drawEstimateTotals(
                 context: context,
                 estimate: estimate,
-                yPosition: yPosition
+                yPosition: totalsYPosition
             )
-            
-            yPosition += 20
-            
-            // Notes
-            if !estimate.notes.isEmpty {
-                drawNotes(
-                    context: context,
-                    notes: estimate.notes,
-                    yPosition: yPosition
-                )
-            }
         }
         
         return PDFDocument(data: data) ?? PDFDocument()
@@ -159,13 +137,14 @@ class PDFRenderer {
         let rightBoxWidth: CGFloat = 200
         let rightBoxX = a4Width - pageMargin - rightBoxWidth
         
-        // Draw Logo (if available)
+        // Draw Logo (if available) - rectangular shape
         if let logoData = business.logoImageData,
            let logoImage = UIImage(data: logoData) {
-            let logoSize: CGFloat = 80
-            let logoRect = CGRect(x: pageMargin, y: currentY, width: logoSize, height: logoSize)
+            let logoWidth: CGFloat = 120
+            let logoHeight: CGFloat = 80
+            let logoRect = CGRect(x: pageMargin, y: currentY, width: logoWidth, height: logoHeight)
             logoImage.draw(in: logoRect)
-            currentY += logoSize + 10
+            currentY += logoHeight + 10
         }
         
         // Draw Business Name
@@ -287,6 +266,18 @@ class PDFRenderer {
             currentY += 40
         }
         
+        // Draw Business Phone Number
+        if !business.phoneNumber.isEmpty {
+            let phoneAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 11),
+                .foregroundColor: UIColor.gray
+            ]
+            let phoneText = "Phone: \(business.phoneNumber)"
+            let phoneRect = CGRect(x: pageMargin, y: currentY, width: contentWidth - rightBoxWidth - 20, height: 15)
+            phoneText.draw(in: phoneRect, withAttributes: phoneAttributes)
+            currentY += 15
+        }
+        
         // Draw License Number
         if !business.licenseNumber.isEmpty {
             let licenseAttributes: [NSAttributedString.Key: Any] = [
@@ -309,13 +300,14 @@ class PDFRenderer {
         let rightBoxWidth: CGFloat = 200
         let rightBoxX = a4Width - pageMargin - rightBoxWidth
         
-        // Draw Logo (if available)
+        // Draw Logo (if available) - rectangular shape
         if let logoData = business.logoImageData,
            let logoImage = UIImage(data: logoData) {
-            let logoSize: CGFloat = 80
-            let logoRect = CGRect(x: pageMargin, y: currentY, width: logoSize, height: logoSize)
+            let logoWidth: CGFloat = 120
+            let logoHeight: CGFloat = 80
+            let logoRect = CGRect(x: pageMargin, y: currentY, width: logoWidth, height: logoHeight)
             logoImage.draw(in: logoRect)
-            currentY += logoSize + 10
+            currentY += logoHeight + 10
         }
         
         // Draw Business Name
@@ -437,6 +429,18 @@ class PDFRenderer {
             currentY += 40
         }
         
+        // Draw Business Phone Number
+        if !business.phoneNumber.isEmpty {
+            let phoneAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 11),
+                .foregroundColor: UIColor.gray
+            ]
+            let phoneText = "Phone: \(business.phoneNumber)"
+            let phoneRect = CGRect(x: pageMargin, y: currentY, width: contentWidth - rightBoxWidth - 20, height: 15)
+            phoneText.draw(in: phoneRect, withAttributes: phoneAttributes)
+            currentY += 15
+        }
+        
         // Draw License Number
         if !business.licenseNumber.isEmpty {
             let licenseAttributes: [NSAttributedString.Key: Any] = [
@@ -457,13 +461,14 @@ class PDFRenderer {
         var currentY = yPosition
         let contentWidth = a4Width - (pageMargin * 2)
         
-        // Draw Logo (if available)
+        // Draw Logo (if available) - rectangular shape
         if let logoData = business.logoImageData,
            let logoImage = UIImage(data: logoData) {
-            let logoSize: CGFloat = 80
-            let logoRect = CGRect(x: pageMargin, y: currentY, width: logoSize, height: logoSize)
+            let logoWidth: CGFloat = 120
+            let logoHeight: CGFloat = 80
+            let logoRect = CGRect(x: pageMargin, y: currentY, width: logoWidth, height: logoHeight)
             logoImage.draw(in: logoRect)
-            currentY += logoSize + 10
+            currentY += logoHeight + 10
         }
         
         // Draw Business Name
@@ -486,6 +491,18 @@ class PDFRenderer {
             let addressRect = CGRect(x: pageMargin, y: currentY, width: contentWidth, height: 40)
             business.address.draw(in: addressRect, withAttributes: addressAttributes)
             currentY += 40
+        }
+        
+        // Draw Business Phone Number
+        if !business.phoneNumber.isEmpty {
+            let phoneAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 11),
+                .foregroundColor: UIColor.gray
+            ]
+            let phoneText = "Phone: \(business.phoneNumber)"
+            let phoneRect = CGRect(x: pageMargin, y: currentY, width: contentWidth, height: 15)
+            phoneText.draw(in: phoneRect, withAttributes: phoneAttributes)
+            currentY += 15
         }
         
         // Draw License Number
@@ -869,10 +886,13 @@ class PDFRenderer {
         return currentY
     }
     
-    private func drawTotals(context: UIGraphicsPDFRendererContext, invoice: Invoice, yPosition: CGFloat) -> CGFloat {
+    private func drawTotals(context: UIGraphicsPDFRendererContext, invoice: Invoice, yPosition: CGFloat) {
         var currentY = yPosition
         let rightMargin = a4Width - pageMargin - 200
-        let lineSpacing: CGFloat = 18
+        let lineSpacing: CGFloat = 20
+        let contentWidth = a4Width - (pageMargin * 2)
+        let boxPadding: CGFloat = 12
+        let totalsStartY = currentY - boxPadding
         
         let currencyFormatter = NumberFormatter()
         currencyFormatter.numberStyle = .currency
@@ -892,6 +912,28 @@ class PDFRenderer {
             .font: UIFont.boldSystemFont(ofSize: 12),
             .foregroundColor: UIColor.black
         ]
+        
+        // Calculate box height based on content
+        var boxHeight: CGFloat = (lineSpacing * 2) + 25 + (boxPadding * 2)
+        
+        // Add extra height for payment summary if invoice is paid
+        if invoice.status == .paid, invoice.paymentMethod != nil, invoice.paidDate != nil, invoice.paymentAmount != nil {
+            boxHeight += 60 // Extra space for payment summary
+        }
+        
+        // Draw gray background box for totals
+        let boxRect = CGRect(x: pageMargin, y: totalsStartY, width: contentWidth, height: boxHeight)
+        UIColor.systemGray6.setFill()
+        context.fill(boxRect)
+        
+        // Draw border around the box
+        context.cgContext.setStrokeColor(UIColor.systemGray4.cgColor)
+        context.cgContext.setLineWidth(0.5)
+        context.cgContext.addRect(boxRect)
+        context.cgContext.strokePath()
+        
+        // Adjust currentY for padding
+        currentY = totalsStartY + boxPadding
         
         // Subtotal
         "Subtotal:".draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 15), withAttributes: labelAttributes)
@@ -900,26 +942,107 @@ class PDFRenderer {
         }
         currentY += lineSpacing
         
+        // Draw thick line under Subtotal
+        context.cgContext.setStrokeColor(UIColor.systemGray3.cgColor)
+        context.cgContext.setLineWidth(1.0) // Thick line
+        context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+        context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+        context.cgContext.strokePath()
+        
         // Tax
         "Tax:".draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 15), withAttributes: labelAttributes)
         if let taxText = currencyFormatter.string(from: NSNumber(value: invoice.tax)) {
             taxText.draw(in: CGRect(x: rightMargin + 100, y: currentY, width: 100, height: 15), withAttributes: valueAttributes)
         }
-        currentY += lineSpacing + 5
+        currentY += lineSpacing
+        
+        // Draw thick line under Tax
+        context.cgContext.setStrokeColor(UIColor.systemGray3.cgColor)
+        context.cgContext.setLineWidth(1.0) // Thick line
+        context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+        context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+        context.cgContext.strokePath()
         
         // Total
         "Total:".draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 18), withAttributes: boldValueAttributes)
         if let totalText = currencyFormatter.string(from: NSNumber(value: invoice.total)) {
             totalText.draw(in: CGRect(x: rightMargin + 100, y: currentY, width: 100, height: 18), withAttributes: boldValueAttributes)
         }
+        currentY += lineSpacing
         
-        return currentY + 25
+        // Draw thick line under Total (separator between totals and payment summary)
+        context.cgContext.setStrokeColor(UIColor.systemGray3.cgColor)
+        context.cgContext.setLineWidth(1.0) // Thick line
+        context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+        context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+        context.cgContext.strokePath()
+        
+        // Payment Summary (only for paid invoices)
+        if invoice.status == .paid, let paymentMethod = invoice.paymentMethod, let paidDate = invoice.paidDate, let paymentAmount = invoice.paymentAmount {
+            currentY += 8
+            
+            // Payment Summary Title
+            let summaryTitleAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.boldSystemFont(ofSize: 11),
+                .foregroundColor: UIColor.black
+            ]
+            "Payment Summary".draw(in: CGRect(x: rightMargin, y: currentY, width: 200, height: 15), withAttributes: summaryTitleAttributes)
+            currentY += lineSpacing
+            
+            // Payment Date and Method combined (Date - Method)
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            let dateMethodText = "\(dateFormatter.string(from: paidDate)) - \(paymentMethod.rawValue)"
+            dateMethodText.draw(in: CGRect(x: rightMargin, y: currentY, width: 200, height: 15), withAttributes: labelAttributes)
+            currentY += lineSpacing - 2
+            
+            // Draw thick line under Date-Method
+            context.cgContext.setStrokeColor(UIColor.systemGray3.cgColor)
+            context.cgContext.setLineWidth(1.0) // Thick line
+            context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+            context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+            context.cgContext.strokePath()
+            
+            // Payment Amount
+            if let paymentText = currencyFormatter.string(from: NSNumber(value: paymentAmount)) {
+                let paymentLabelText = "Amount: "
+                paymentLabelText.draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 15), withAttributes: labelAttributes)
+                paymentText.draw(in: CGRect(x: rightMargin + 100, y: currentY, width: 100, height: 15), withAttributes: valueAttributes)
+            }
+            currentY += lineSpacing - 2
+            
+            // Draw thick line under Amount
+            context.cgContext.setStrokeColor(UIColor.systemGray3.cgColor)
+            context.cgContext.setLineWidth(1.0) // Thick line
+            context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+            context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+            context.cgContext.strokePath()
+            
+            // Remaining Amount
+            let remainingAmount = invoice.remainingAmount
+            if let remainingText = currencyFormatter.string(from: NSNumber(value: remainingAmount)) {
+                let remainingLabelText = "Remaining: "
+                remainingLabelText.draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 15), withAttributes: labelAttributes)
+                remainingText.draw(in: CGRect(x: rightMargin + 100, y: currentY, width: 100, height: 15), withAttributes: remainingAmount == 0 ? boldValueAttributes : valueAttributes)
+            }
+            currentY += lineSpacing - 2
+            
+            // Draw thick line under Remaining (last line)
+            context.cgContext.setStrokeColor(UIColor.systemGray3.cgColor)
+            context.cgContext.setLineWidth(1.0) // Thick line
+            context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+            context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+            context.cgContext.strokePath()
+        }
     }
     
-    private func drawEstimateTotals(context: UIGraphicsPDFRendererContext, estimate: Estimate, yPosition: CGFloat) -> CGFloat {
+    private func drawEstimateTotals(context: UIGraphicsPDFRendererContext, estimate: Estimate, yPosition: CGFloat) {
         var currentY = yPosition
         let rightMargin = a4Width - pageMargin - 200
-        let lineSpacing: CGFloat = 18
+        let lineSpacing: CGFloat = 20
+        let contentWidth = a4Width - (pageMargin * 2)
+        let boxPadding: CGFloat = 12
+        let totalsStartY = currentY - boxPadding
         
         let currencyFormatter = NumberFormatter()
         currencyFormatter.numberStyle = .currency
@@ -940,6 +1063,23 @@ class PDFRenderer {
             .foregroundColor: UIColor.black
         ]
         
+        // Calculate box height based on content
+        let boxHeight: CGFloat = (lineSpacing * 2) + 25 + (boxPadding * 2)
+        
+        // Draw gray background box for totals
+        let boxRect = CGRect(x: pageMargin, y: totalsStartY, width: contentWidth, height: boxHeight)
+        UIColor.systemGray6.setFill()
+        context.fill(boxRect)
+        
+        // Draw border around the box
+        context.cgContext.setStrokeColor(UIColor.systemGray4.cgColor)
+        context.cgContext.setLineWidth(0.5)
+        context.cgContext.addRect(boxRect)
+        context.cgContext.strokePath()
+        
+        // Adjust currentY for padding
+        currentY = totalsStartY + boxPadding
+        
         // Subtotal
         "Subtotal:".draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 15), withAttributes: labelAttributes)
         if let subtotalText = currencyFormatter.string(from: NSNumber(value: estimate.amount)) {
@@ -947,23 +1087,35 @@ class PDFRenderer {
         }
         currentY += lineSpacing
         
+        // Draw line under Subtotal
+        context.cgContext.setStrokeColor(UIColor.systemGray4.cgColor)
+        context.cgContext.setLineWidth(0.5)
+        context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+        context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+        context.cgContext.strokePath()
+        
         // Tax
         "Tax:".draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 15), withAttributes: labelAttributes)
         if let taxText = currencyFormatter.string(from: NSNumber(value: estimate.tax)) {
             taxText.draw(in: CGRect(x: rightMargin + 100, y: currentY, width: 100, height: 15), withAttributes: valueAttributes)
         }
-        currentY += lineSpacing + 5
+        currentY += lineSpacing
+        
+        // Draw line under Tax
+        context.cgContext.setStrokeColor(UIColor.systemGray4.cgColor)
+        context.cgContext.setLineWidth(0.5)
+        context.cgContext.move(to: CGPoint(x: rightMargin, y: currentY - 2))
+        context.cgContext.addLine(to: CGPoint(x: rightMargin + 200, y: currentY - 2))
+        context.cgContext.strokePath()
         
         // Total
         "Total:".draw(in: CGRect(x: rightMargin, y: currentY, width: 100, height: 18), withAttributes: boldValueAttributes)
         if let totalText = currencyFormatter.string(from: NSNumber(value: estimate.total)) {
             totalText.draw(in: CGRect(x: rightMargin + 100, y: currentY, width: 100, height: 18), withAttributes: boldValueAttributes)
         }
-        
-        return currentY + 25
     }
     
-    private func drawNotes(context: UIGraphicsPDFRendererContext, notes: String, yPosition: CGFloat) {
+    private func drawNotes(context: UIGraphicsPDFRendererContext, notes: String, yPosition: CGFloat) -> CGFloat {
         let contentWidth = a4Width - (pageMargin * 2)
         let boxHeight: CGFloat = 60
         
@@ -984,6 +1136,8 @@ class PDFRenderer {
         
         "Notes:".draw(in: CGRect(x: pageMargin + 10, y: yPosition + 10, width: contentWidth, height: 15), withAttributes: labelAttributes)
         notes.draw(in: CGRect(x: pageMargin + 10, y: yPosition + 25, width: contentWidth - 20, height: 30), withAttributes: notesAttributes)
+        
+        return yPosition + boxHeight
     }
 }
 

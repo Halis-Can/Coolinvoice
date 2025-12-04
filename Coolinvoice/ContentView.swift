@@ -15,7 +15,7 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             // Estimates Tab
             NavigationStack {
-                EstimateView()
+                EstimateView(invoices: $invoices)
             }
             .tabItem {
                 Label("Estimate", systemImage: "doc.fill")
@@ -24,7 +24,7 @@ struct ContentView: View {
             
             // Invoices Tab
             NavigationStack {
-                InvoiceListView(invoices: invoices)
+                InvoiceListView(invoices: $invoices)
             }
             .tabItem {
                 Label("Invoice", systemImage: "doc.text.fill")
@@ -62,7 +62,7 @@ struct ContentView: View {
 }
 
 struct InvoiceListView: View {
-    let invoices: [Invoice]
+    @Binding var invoices: [Invoice]
     @State private var selectedSegment: InvoiceSegment = .active
     @State private var searchText = ""
     @State private var showingNewInvoice = false
@@ -116,7 +116,11 @@ struct InvoiceListView: View {
                 } else {
                     ForEach(filteredInvoices) { invoice in
                         NavigationLink {
-                            PDFInvoiceView(invoice: invoice)
+                            PDFInvoiceView(invoice: invoice) { updatedInvoice in
+                                if let index = invoices.firstIndex(where: { $0.id == updatedInvoice.id }) {
+                                    invoices[index] = updatedInvoice
+                                }
+                            }
                         } label: {
                             InvoiceRow(invoice: invoice)
                         }
@@ -138,8 +142,9 @@ struct InvoiceListView: View {
             }
         }
         .sheet(isPresented: $showingNewInvoice) {
-            // New invoice view would go here
-            Text("New Invoice")
+            NewInvoiceView(existingInvoices: invoices) { invoice in
+                invoices.append(invoice)
+            }
         }
     }
 }
@@ -159,9 +164,19 @@ struct InvoiceRow: View {
                     .font(.headline)
                     .foregroundStyle(.primary)
                 
-                Text(invoice.invoiceNumber)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
+                    Text(invoice.invoiceNumber)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text("•")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(invoice.date, format: .dateTime.month().day().year())
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
             
             Spacer()

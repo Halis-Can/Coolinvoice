@@ -14,8 +14,11 @@ struct InvoicePaymentView: View {
     @State private var paymentAmount: Double
     @State private var showingSuccess = false
     
-    init(invoice: Invoice) {
+    let onUpdate: ((Invoice) -> Void)?
+    
+    init(invoice: Invoice, onUpdate: ((Invoice) -> Void)? = nil) {
         self.invoice = invoice
+        self.onUpdate = onUpdate
         _paymentAmount = State(initialValue: invoice.total)
     }
     
@@ -79,7 +82,14 @@ struct InvoicePaymentView: View {
     }
     
     private func savePayment() {
-        // Save payment logic would go here
+        // Update invoice status to paid
+        var updatedInvoice = invoice
+        updatedInvoice.status = .paid
+        updatedInvoice.paymentMethod = selectedMethod
+        updatedInvoice.paidDate = Date()
+        updatedInvoice.paymentAmount = paymentAmount
+        
+        onUpdate?(updatedInvoice)
         showingSuccess = true
     }
 }

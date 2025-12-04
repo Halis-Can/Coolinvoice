@@ -76,8 +76,10 @@ struct PDFInvoiceView: View {
             .onAppear {
                 generatePDF()
             }
-            .onChange(of: invoice) {
-                generatePDF()
+            .onChange(of: invoice) { oldValue, newValue in
+                Task { @MainActor in
+                    generatePDF()
+                }
             }
             .sheet(isPresented: $showingShareSheet) {
                 if let pdfDocument = pdfDocument,
@@ -95,16 +97,21 @@ struct PDFInvoiceView: View {
                 TapToPaySheet()
             }
             .sheet(isPresented: $showingPaymentView) {
-                InvoicePaymentView(invoice: invoice)
+                InvoicePaymentView(invoice: invoice) { updatedInvoice in
+                    invoice = updatedInvoice
+                    onUpdate?(updatedInvoice)
+                }
             }
             .sheet(isPresented: $showingMoreOptions) {
                 InvoiceMoreOptionsView(invoice: invoice)
             }
             .sheet(isPresented: $showingEditView) {
                 EditInvoiceView(invoice: $invoice) {
-                    onUpdate?($invoice.wrappedValue)
-                    generatePDF()
-                    showingEditView = false
+                    Task { @MainActor in
+                        onUpdate?($invoice.wrappedValue)
+                        generatePDF()
+                        showingEditView = false
+                    }
                 }
             }
         }
@@ -135,6 +142,7 @@ struct PDFInvoiceView: View {
 
 struct PDFEstimateView: View {
     @State private var estimate: Estimate
+    @Binding var invoices: [Invoice]
     @StateObject private var businessManager = BusinessManager.shared
     @State private var pdfDocument: PDFDocument?
     @Environment(\.dismiss) private var dismiss
@@ -142,11 +150,13 @@ struct PDFEstimateView: View {
     @State private var showingSendOptions = false
     @State private var showingInvoiceView = false
     @State private var showingEditView = false
+    @State private var showingApproveAlert = false
     
     let onUpdate: ((Estimate) -> Void)?
     
-    init(estimate: Estimate, onUpdate: ((Estimate) -> Void)? = nil) {
+    init(estimate: Estimate, invoices: Binding<[Invoice]>, onUpdate: ((Estimate) -> Void)? = nil) {
         _estimate = State(initialValue: estimate)
+        _invoices = invoices
         self.onUpdate = onUpdate
     }
     
@@ -162,6 +172,13 @@ struct PDFEstimateView: View {
                         
                         ActionButton(title: "PRINT", icon: "printer.fill") {
                             printPDF()
+                        }
+                        
+                        // Show APPROVE button only for pending estimates
+                        if estimate.status == .pending {
+                            ActionButton(title: "APPROVE", icon: "checkmark.circle.fill") {
+                                showingApproveAlert = true
+                            }
                         }
                         
                         ActionButton(title: "INVOICE", icon: "doc.text.fill") {
@@ -195,8 +212,10 @@ struct PDFEstimateView: View {
             .onAppear {
                 generatePDF()
             }
-            .onChange(of: estimate) {
-                generatePDF()
+            .onChange(of: estimate) { oldValue, newValue in
+                Task { @MainActor in
+                    generatePDF()
+                }
             }
             .sheet(isPresented: $showingShareSheet) {
                 if let pdfDocument = pdfDocument,
@@ -211,18 +230,34 @@ struct PDFEstimateView: View {
                 }
             }
             .sheet(isPresented: $showingInvoiceView) {
-                EstimateToInvoiceView(estimate: estimate) { invoice in
+                EstimateToInvoiceView(estimate: estimate, existingInvoices: invoices) { invoice in
+                    invoices.append(invoice)
                     showingInvoiceView = false
                 }
             }
             .sheet(isPresented: $showingEditView) {
                 EditEstimateView(estimate: $estimate) {
-                    onUpdate?($estimate.wrappedValue)
-                    generatePDF()
-                    showingEditView = false
+                    Task { @MainActor in
+                        onUpdate?($estimate.wrappedValue)
+                        generatePDF()
+                        showingEditView = false
+                    }
                 }
             }
+            .alert("Approve Estimate", isPresented: $showingApproveAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Approve") {
+                    approveEstimate()
+                }
+            } message: {
+                Text("Are you sure you want to approve this estimate?")
+            }
         }
+    }
+    
+    private func approveEstimate() {
+        estimate.status = .approved
+        onUpdate?(estimate)
     }
     
     private func generatePDF() {
@@ -263,7 +298,9 @@ struct PDFViewer: UIViewRepresentable {
     }
     
     func updateUIView(_ pdfView: PDFView, context: Context) {
-        pdfView.document = document
+        if pdfView.document != document {
+            pdfView.document = document
+        }
     }
 }
 

@@ -12,6 +12,7 @@ struct BusinessProfileView: View {
     @StateObject private var businessManager = BusinessManager.shared
     @State private var businessName: String = ""
     @State private var businessAddress: String = ""
+    @State private var businessPhoneNumber: String = ""
     @State private var licenseNumber: String = ""
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var showingImagePicker = false
@@ -87,10 +88,22 @@ struct BusinessProfileView: View {
             Section {
                 TextField("Business Name", text: $businessName)
                     .textContentType(.organizationName)
+                    .autocapitalization(.words)
                 
                 TextField("Business Address", text: $businessAddress, axis: .vertical)
-                    .lineLimit(3...6)
-                    .textContentType(.streetAddressLine1)
+                    .lineLimit(3...10)
+                    .textContentType(.fullStreetAddress)
+                    .autocapitalization(.words)
+                
+                TextField("Phone Number", text: $businessPhoneNumber)
+                    .keyboardType(.phonePad)
+                    .textContentType(.telephoneNumber)
+                    .onChange(of: businessPhoneNumber) { oldValue, newValue in
+                        let formatted = PhoneNumberFormatter.formatPhoneNumber(newValue)
+                        if formatted != newValue {
+                            businessPhoneNumber = formatted
+                        }
+                    }
                 
                 TextField("License Number", text: $licenseNumber)
                     .textContentType(.none)
@@ -128,12 +141,14 @@ struct BusinessProfileView: View {
     private func loadBusinessInfo() {
         businessName = businessManager.business.name
         businessAddress = businessManager.business.address
+        businessPhoneNumber = businessManager.business.phoneNumber
         licenseNumber = businessManager.business.licenseNumber
     }
     
     private func saveBusinessInfo() {
         businessManager.business.name = businessName.trimmingCharacters(in: .whitespaces)
         businessManager.business.address = businessAddress.trimmingCharacters(in: .whitespaces)
+        businessManager.business.phoneNumber = businessPhoneNumber.trimmingCharacters(in: .whitespaces)
         businessManager.business.licenseNumber = licenseNumber.trimmingCharacters(in: .whitespaces)
         dismiss()
     }

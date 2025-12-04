@@ -13,6 +13,10 @@ struct NewEstimateView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedClient: Client?
     @State private var showingClientPicker = false
+    @State private var clientName: String = ""
+    @State private var clientPhone: String = ""
+    @State private var clientEmail: String = ""
+    @State private var clientAddress: String = ""
     @State private var estimateItems: [InvoiceItem] = []
     @State private var showingAddItem = false
     @State private var selectedPhotos: [PhotosPickerItem] = []
@@ -21,6 +25,7 @@ struct NewEstimateView: View {
     @State private var estimateDate: Date = Date()
     @State private var poNumber: String = ""
     @State private var showingDoneAlert = false
+    @FocusState private var isPhoneFocused: Bool
     
     let clients: [Client] = Client.sampleClients
     let onSave: (Estimate) -> Void
@@ -37,51 +42,47 @@ struct NewEstimateView: View {
             Form {
                 // Add Client Section
                 Section {
-                    if let client = selectedClient {
-                        HStack {
-                            Circle()
-                                .fill(Color.blue.opacity(0.2))
-                                .frame(width: 40, height: 40)
-                                .overlay {
-                                    Text(client.initials)
-                                        .font(.headline)
-                                        .foregroundStyle(.blue)
-                                }
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(client.name)
-                                    .font(.headline)
-                                if !client.company.isEmpty {
-                                    Text(client.company)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            
-                            Spacer()
-                            
-                            Button {
-                                selectedClient = nil
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.gray)
+                    TextField("Name", text: $clientName)
+                        .textContentType(.name)
+                        .autocapitalization(.words)
+                    
+                    TextField("Phone Number", text: $clientPhone)
+                        .keyboardType(.phonePad)
+                        .textContentType(.telephoneNumber)
+                        .focused($isPhoneFocused)
+                        .onChange(of: isPhoneFocused) { oldValue, newValue in
+                            // Format when focus is lost
+                            if !newValue && oldValue {
+                                let formatted = PhoneNumberFormatter.formatPhoneNumber(clientPhone)
+                                clientPhone = formatted
                             }
                         }
-                    } else {
-                        Button {
-                            showingClientPicker = true
-                        } label: {
-                            HStack {
-                                Image(systemName: "plus.circle.fill")
-                                    .foregroundStyle(.blue)
-                                Text("Add Client")
-                                    .foregroundStyle(.blue)
-                                Spacer()
-                            }
+                    
+                    TextField("Email", text: $clientEmail)
+                        .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
+                        .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                    
+                    TextField("Address", text: $clientAddress, axis: .vertical)
+                        .lineLimit(3...10)
+                        .textContentType(.fullStreetAddress)
+                        .autocapitalization(.words)
+                    
+                    Button {
+                        showingClientPicker = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "person.circle")
+                                .foregroundStyle(.blue)
+                            Text("Select from Existing Clients")
+                                .foregroundStyle(.blue)
+                            Spacer()
                         }
                     }
                 } header: {
-                    Text("Client")
+                    Text("Client Information")
                 }
                 
                 // Add Line Items Section
@@ -143,7 +144,7 @@ struct NewEstimateView: View {
                             }
                             
                             HStack {
-                                Text("Tax (9%)")
+                                Text("Tax (\(TaxSettingsManager.shared.taxRate * 100, specifier: "%.1f")%)")
                                     .foregroundStyle(.secondary)
                                 Spacer()
                                 Text(tax, format: .currency(code: "USD"))
@@ -244,6 +245,9 @@ struct NewEstimateView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
+                        // Format phone number before creating estimate
+                        let formatted = PhoneNumberFormatter.formatPhoneNumber(clientPhone)
+                        clientPhone = formatted
                         createEstimate()
                     }
                     .disabled(!canCreateEstimate)
@@ -253,6 +257,10 @@ struct NewEstimateView: View {
             .sheet(isPresented: $showingClientPicker) {
                 ClientPickerView(clients: clients) { client in
                     selectedClient = client
+                    clientName = client.name
+                    clientPhone = client.phone
+                    clientEmail = client.email
+                    clientAddress = client.address
                     showingClientPicker = false
                 }
             }
@@ -281,7 +289,7 @@ struct NewEstimateView: View {
     }
     
     private var tax: Double {
-        subtotal * 0.09
+        TaxSettingsManager.shared.calculateTax(for: subtotal)
     }
     
     private var total: Double {
@@ -289,22 +297,22 @@ struct NewEstimateView: View {
     }
     
     private var canCreateEstimate: Bool {
-        selectedClient != nil &&
+        !clientName.trimmingCharacters(in: .whitespaces).isEmpty &&
         !estimateItems.isEmpty
     }
     
     private func createEstimate() {
-        guard let client = selectedClient else { return }
+        guard !clientName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         
         let finalEstimateNumber = estimateNumber.trimmingCharacters(in: .whitespaces).isEmpty ? 
             "EST-\(Calendar.current.component(.year, from: Date()))-\(String(format: "%03d", Int.random(in: 100...999)))" : estimateNumber.trimmingCharacters(in: .whitespaces)
         
         let estimate = Estimate(
             estimateNumber: finalEstimateNumber,
-            clientName: client.name,
-            clientPhone: client.phone,
-            clientEmail: client.email,
-            clientAddress: client.address,
+            clientName: clientName.trimmingCharacters(in: .whitespaces),
+            clientPhone: clientPhone,
+            clientEmail: clientEmail,
+            clientAddress: clientAddress,
             amount: subtotal,
             tax: tax,
             date: estimateDate,

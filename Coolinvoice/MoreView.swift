@@ -35,7 +35,7 @@ struct MoreView: View {
             
             Section("Templates") {
                 NavigationLink {
-                    Text("Invoice Templates")
+                    InvoiceTemplatesView()
                 } label: {
                     Label("Invoice Templates", systemImage: "doc.text.fill")
                 }
@@ -55,7 +55,7 @@ struct MoreView: View {
                 }
                 
                 NavigationLink {
-                    Text("Tax Settings")
+                    TaxSettingsView()
                 } label: {
                     Label("Tax Settings", systemImage: "percent")
                 }
@@ -73,7 +73,7 @@ struct MoreView: View {
                 }
                 
                 NavigationLink {
-                    Text("About")
+                    AboutView()
                 } label: {
                     Label("About", systemImage: "info.circle.fill")
                 }

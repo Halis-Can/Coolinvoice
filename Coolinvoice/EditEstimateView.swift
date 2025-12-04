@@ -16,6 +16,8 @@ struct EditEstimateView: View {
     @State private var selectedPhotos: [PhotosPickerItem] = []
     @State private var loadedImages: [UIImage] = []
     @State private var poNumber: String = ""
+    @State private var clientPhoneText: String = ""
+    @FocusState private var isPhoneFocused: Bool
     
     let onSave: () -> Void
     
@@ -44,16 +46,33 @@ struct EditEstimateView: View {
                 
                 Section {
                     TextField("Name", text: $estimate.clientName)
+                        .textContentType(.name)
+                        .autocapitalization(.words)
                     
-                    TextField("Phone Number", text: $estimate.clientPhone)
+                    TextField("Phone Number", text: $clientPhoneText)
                         .keyboardType(.phonePad)
+                        .textContentType(.telephoneNumber)
+                        .focused($isPhoneFocused)
+                        .onChange(of: isPhoneFocused) { oldValue, newValue in
+                            // Format when focus is lost
+                            if !newValue && oldValue {
+                                let formatted = PhoneNumberFormatter.formatPhoneNumber(clientPhoneText)
+                                clientPhoneText = formatted
+                                estimate.clientPhone = formatted
+                            }
+                        }
                     
                     TextField("Email", text: $estimate.clientEmail)
                         .keyboardType(.emailAddress)
+                        .textContentType(.emailAddress)
                         .autocapitalization(.none)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
                     
                     TextField("Address", text: $estimate.clientAddress, axis: .vertical)
-                        .lineLimit(3...5)
+                        .lineLimit(3...10)
+                        .textContentType(.fullStreetAddress)
+                        .autocapitalization(.words)
                 } header: {
                     Text("Client Information")
                 }
@@ -105,6 +124,10 @@ struct EditEstimateView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        // Format phone number before saving
+                        let formatted = PhoneNumberFormatter.formatPhoneNumber(clientPhoneText)
+                        clientPhoneText = formatted
+                        estimate.clientPhone = formatted
                         updateTotals()
                         onSave()
                     }
@@ -120,13 +143,16 @@ struct EditEstimateView: View {
             .sheet(isPresented: $showingOrganizeItems) {
                 OrganizeItemsView(items: $estimate.items)
             }
+            .onAppear {
+                clientPhoneText = estimate.clientPhone
+            }
         }
     }
     
     private func updateTotals() {
         let subtotal = estimate.items.reduce(0) { $0 + $1.total }
         estimate.amount = subtotal
-        estimate.tax = subtotal * 0.09
+        estimate.tax = TaxSettingsManager.shared.calculateTax(for: subtotal)
         // total is computed property: amount + tax, so it updates automatically
     }
 }

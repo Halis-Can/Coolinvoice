@@ -9,13 +9,23 @@ import SwiftUI
 
 struct EstimateToInvoiceView: View {
     let estimate: Estimate
+    let existingInvoices: [Invoice]
     @Environment(\.dismiss) private var dismiss
     @State private var invoiceNumber: String = ""
     @State private var invoiceDate: Date = Date()
     @State private var dueDate: Date = Date()
     @State private var showingSuccess = false
+    @State private var showingConfirmAlert = false
     
     let onSave: (Invoice) -> Void
+    
+    init(estimate: Estimate, existingInvoices: [Invoice] = [], onSave: @escaping (Invoice) -> Void) {
+        self.estimate = estimate
+        self.existingInvoices = existingInvoices
+        self.onSave = onSave
+        let generatedNumber = InvoiceNumberGenerator.generateNextInvoiceNumber(from: existingInvoices)
+        _invoiceNumber = State(initialValue: generatedNumber)
+    }
     
     var body: some View {
         NavigationStack {
@@ -23,12 +33,15 @@ struct EstimateToInvoiceView: View {
                 Section {
                     TextField("Invoice Number", text: $invoiceNumber)
                         .textContentType(.none)
+                        .disabled(true) // Auto-generated, not editable
                     
                     DatePicker("Invoice Date", selection: $invoiceDate, displayedComponents: .date)
                     
                     DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
                 } header: {
                     Text("Invoice Details")
+                } footer: {
+                    Text("Invoice number is automatically generated.")
                 }
                 
                 Section {
@@ -53,11 +66,22 @@ struct EstimateToInvoiceView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Create") {
-                        createInvoice()
+                        if estimate.status == .approved {
+                            showingConfirmAlert = true
+                        } else {
+                            createInvoice()
+                        }
                     }
-                    .disabled(invoiceNumber.isEmpty)
                     .fontWeight(.semibold)
                 }
+            }
+            .alert("Confirm Invoice Creation", isPresented: $showingConfirmAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Create Invoice") {
+                    createInvoice()
+                }
+            } message: {
+                Text("This will create a new invoice from the approved estimate. Continue?")
             }
             .alert("Invoice Created", isPresented: $showingSuccess) {
                 Button("OK") {
@@ -70,12 +94,16 @@ struct EstimateToInvoiceView: View {
     }
     
     private func createInvoice() {
+        let finalInvoiceNumber = invoiceNumber.trimmingCharacters(in: .whitespaces).isEmpty ?
+            InvoiceNumberGenerator.generateNextInvoiceNumber(from: existingInvoices) :
+            invoiceNumber.trimmingCharacters(in: .whitespaces)
+        
         let invoice = Invoice(
-            invoiceNumber: invoiceNumber.isEmpty ? "INV-\(Int.random(in: 1000...9999))" : invoiceNumber,
+            invoiceNumber: finalInvoiceNumber,
             clientName: estimate.clientName,
             clientPhone: estimate.clientPhone,
             clientEmail: estimate.clientEmail,
-            clientAddress: "",
+            clientAddress: estimate.clientAddress,
             amount: estimate.amount,
             tax: estimate.tax,
             date: invoiceDate,
