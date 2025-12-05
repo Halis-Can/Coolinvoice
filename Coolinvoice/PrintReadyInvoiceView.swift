@@ -1,6 +1,6 @@
 //
 //  PrintReadyInvoiceView.swift
-//  Coolinvoice
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
