@@ -1,6 +1,6 @@
 //
 //  PDFRenderer.swift
-//  Coolinvoice
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
@@ -17,7 +17,7 @@ class PDFRenderer {
     
     func createInvoicePDF(invoice: Invoice, business: Business) -> PDFDocument {
         let pdfMetaData = [
-            kCGPDFContextCreator: "CoolInvoice",
+            kCGPDFContextCreator: "Cullinvoice",
             kCGPDFContextAuthor: business.name.isEmpty ? "Business" : business.name,
             kCGPDFContextTitle: invoice.invoiceNumber
         ]
@@ -74,7 +74,7 @@ class PDFRenderer {
     
     func createEstimatePDF(estimate: Estimate, business: Business) -> PDFDocument {
         let pdfMetaData = [
-            kCGPDFContextCreator: "CoolInvoice",
+            kCGPDFContextCreator: "Cullinvoice",
             kCGPDFContextAuthor: business.name.isEmpty ? "Business" : business.name,
             kCGPDFContextTitle: estimate.estimateNumber
         ]
@@ -522,7 +522,6 @@ class PDFRenderer {
     
     private func drawInvoiceHeader(context: UIGraphicsPDFRendererContext, invoice: Invoice, yPosition: CGFloat) -> CGFloat {
         var currentY = yPosition
-        let contentWidth = a4Width - (pageMargin * 2)
         
         // Draw "INVOICE" title - centered and light gray
         let titleAttributes: [NSAttributedString.Key: Any] = [
@@ -541,7 +540,6 @@ class PDFRenderer {
     
     private func drawEstimateHeader(context: UIGraphicsPDFRendererContext, estimate: Estimate, yPosition: CGFloat) -> CGFloat {
         var currentY = yPosition
-        let contentWidth = a4Width - (pageMargin * 2)
         
         // Draw "ESTIMATE" title - centered and light gray
         let titleAttributes: [NSAttributedString.Key: Any] = [

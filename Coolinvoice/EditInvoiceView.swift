@@ -1,6 +1,6 @@
 //
 //  EditInvoiceView.swift
-//  Coolinvoice
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
@@ -12,6 +12,8 @@ struct EditInvoiceView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingAddItem = false
     @State private var showingOrganizeItems = false
+    @State private var editingItem: InvoiceItem?
+    @State private var showingEditItem = false
     @State private var clientPhoneText: String = ""
     @FocusState private var isPhoneFocused: Bool
     let onSave: () -> Void
@@ -70,7 +72,10 @@ struct EditInvoiceView: View {
                 
                 Section {
                     ForEach(invoice.items) { item in
-                        InvoiceItemEditRow(item: item)
+                        InvoiceItemEditRow(item: item) {
+                            editingItem = item
+                            showingEditItem = true
+                        }
                     }
                     .onDelete { indexSet in
                         invoice.items.remove(atOffsets: indexSet)
@@ -131,6 +136,20 @@ struct EditInvoiceView: View {
                     updateTotals()
                 }
             }
+            .sheet(isPresented: $showingEditItem) {
+                if let item = editingItem {
+                    AddInvoiceItemView(editingItem: item) { updatedItem in
+                        if let index = invoice.items.firstIndex(where: { $0.id == item.id }) {
+                            invoice.items[index] = updatedItem
+                            updateTotals()
+                        }
+                        editingItem = nil
+                    }
+                } else {
+                    // Fallback - should not happen
+                    Text("Error loading item")
+                }
+            }
             .sheet(isPresented: $showingOrganizeItems) {
                 OrganizeItemsView(items: $invoice.items)
             }
@@ -150,17 +169,30 @@ struct EditInvoiceView: View {
 
 struct InvoiceItemEditRow: View {
     let item: InvoiceItem
+    let onEdit: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(item.description)
-                .font(.headline)
-            Text("\(item.quantity, format: .number) × \(item.unitPrice, format: .currency(code: "USD"))")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Text(item.total, format: .currency(code: "USD"))
-                .font(.headline)
-                .foregroundStyle(.primary)
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(item.description)
+                    .font(.headline)
+                Text("\(item.quantity, format: .number) × \(item.unitPrice, format: .currency(code: "USD"))")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(item.total, format: .currency(code: "USD"))
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+            }
+            
+            Spacer()
+            
+            Button {
+                onEdit()
+            } label: {
+                Image(systemName: "pencil")
+                    .foregroundStyle(.blue)
+            }
+            .buttonStyle(.plain)
         }
         .padding(.vertical, 4)
     }

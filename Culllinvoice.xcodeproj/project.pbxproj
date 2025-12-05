@@ -12,35 +12,35 @@
 			containerPortal = 40C4D0162EDFA46000932EAD /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 40C4D01D2EDFA46000932EAD;
-			remoteInfo = Coolinvoice;
+			remoteInfo = Cullinvoice;
 		};
 		40C4D0362EDFA46100932EAD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 40C4D0162EDFA46000932EAD /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 40C4D01D2EDFA46000932EAD;
-			remoteInfo = Coolinvoice;
+			remoteInfo = Cullinvoice;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		40C4D01E2EDFA46000932EAD /* Coolinvoice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Coolinvoice.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		40C4D02B2EDFA46100932EAD /* CoolinvoiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoolinvoiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		40C4D0352EDFA46100932EAD /* CoolinvoiceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoolinvoiceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		40C4D01E2EDFA46000932EAD /* Culllinvoice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Culllinvoice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		40C4D02B2EDFA46100932EAD /* CulllinvoiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CulllinvoiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		40C4D0352EDFA46100932EAD /* CulllinvoiceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CulllinvoiceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		40C4D0202EDFA46000932EAD /* Coolinvoice */ = {
+		40C4D0202EDFA46000932EAD /* Cullinvoice */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Coolinvoice;
 			sourceTree = "<group>";
 		};
-		40C4D02E2EDFA46100932EAD /* CoolinvoiceTests */ = {
+		40C4D02E2EDFA46100932EAD /* CullinvoiceTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CoolinvoiceTests;
 			sourceTree = "<group>";
 		};
-		40C4D0382EDFA46100932EAD /* CoolinvoiceUITests */ = {
+		40C4D0382EDFA46100932EAD /* CullinvoiceUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CoolinvoiceUITests;
 			sourceTree = "<group>";
@@ -75,9 +75,9 @@
 		40C4D0152EDFA46000932EAD = {
 			isa = PBXGroup;
 			children = (
-				40C4D0202EDFA46000932EAD /* Coolinvoice */,
-				40C4D02E2EDFA46100932EAD /* CoolinvoiceTests */,
-				40C4D0382EDFA46100932EAD /* CoolinvoiceUITests */,
+				40C4D0202EDFA46000932EAD /* Cullinvoice */,
+				40C4D02E2EDFA46100932EAD /* CullinvoiceTests */,
+				40C4D0382EDFA46100932EAD /* CullinvoiceUITests */,
 				40C4D01F2EDFA46000932EAD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		40C4D01F2EDFA46000932EAD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				40C4D01E2EDFA46000932EAD /* Coolinvoice.app */,
-				40C4D02B2EDFA46100932EAD /* CoolinvoiceTests.xctest */,
-				40C4D0352EDFA46100932EAD /* CoolinvoiceUITests.xctest */,
+				40C4D01E2EDFA46000932EAD /* Culllinvoice.app */,
+				40C4D02B2EDFA46100932EAD /* CulllinvoiceTests.xctest */,
+				40C4D0352EDFA46100932EAD /* CulllinvoiceUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		40C4D01D2EDFA46000932EAD /* Coolinvoice */ = {
+		40C4D01D2EDFA46000932EAD /* Culllinvoice */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 40C4D03F2EDFA46100932EAD /* Build configuration list for PBXNativeTarget "Coolinvoice" */;
+			buildConfigurationList = 40C4D03F2EDFA46100932EAD /* Build configuration list for PBXNativeTarget "Culllinvoice" */;
 			buildPhases = (
 				40C4D01A2EDFA46000932EAD /* Sources */,
 				40C4D01B2EDFA46000932EAD /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				40C4D0202EDFA46000932EAD /* Coolinvoice */,
+				40C4D0202EDFA46000932EAD /* Cullinvoice */,
 			);
-			name = Coolinvoice;
+			name = Culllinvoice;
 			packageProductDependencies = (
 			);
-			productName = Coolinvoice;
-			productReference = 40C4D01E2EDFA46000932EAD /* Coolinvoice.app */;
+			productName = Cullinvoice;
+			productReference = 40C4D01E2EDFA46000932EAD /* Culllinvoice.app */;
 			productType = "com.apple.product-type.application";
 		};
-		40C4D02A2EDFA46100932EAD /* CoolinvoiceTests */ = {
+		40C4D02A2EDFA46100932EAD /* CulllinvoiceTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 40C4D0422EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CoolinvoiceTests" */;
+			buildConfigurationList = 40C4D0422EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CulllinvoiceTests" */;
 			buildPhases = (
 				40C4D0272EDFA46100932EAD /* Sources */,
 				40C4D0282EDFA46100932EAD /* Frameworks */,
@@ -131,18 +131,18 @@
 				40C4D02D2EDFA46100932EAD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				40C4D02E2EDFA46100932EAD /* CoolinvoiceTests */,
+				40C4D02E2EDFA46100932EAD /* CullinvoiceTests */,
 			);
-			name = CoolinvoiceTests;
+			name = CulllinvoiceTests;
 			packageProductDependencies = (
 			);
-			productName = CoolinvoiceTests;
-			productReference = 40C4D02B2EDFA46100932EAD /* CoolinvoiceTests.xctest */;
+			productName = CullinvoiceTests;
+			productReference = 40C4D02B2EDFA46100932EAD /* CulllinvoiceTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		40C4D0342EDFA46100932EAD /* CoolinvoiceUITests */ = {
+		40C4D0342EDFA46100932EAD /* CulllinvoiceUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 40C4D0452EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CoolinvoiceUITests" */;
+			buildConfigurationList = 40C4D0452EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CulllinvoiceUITests" */;
 			buildPhases = (
 				40C4D0312EDFA46100932EAD /* Sources */,
 				40C4D0322EDFA46100932EAD /* Frameworks */,
@@ -154,13 +154,13 @@
 				40C4D0372EDFA46100932EAD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				40C4D0382EDFA46100932EAD /* CoolinvoiceUITests */,
+				40C4D0382EDFA46100932EAD /* CullinvoiceUITests */,
 			);
-			name = CoolinvoiceUITests;
+			name = CulllinvoiceUITests;
 			packageProductDependencies = (
 			);
-			productName = CoolinvoiceUITests;
-			productReference = 40C4D0352EDFA46100932EAD /* CoolinvoiceUITests.xctest */;
+			productName = CullinvoiceUITests;
+			productReference = 40C4D0352EDFA46100932EAD /* CulllinvoiceUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 40C4D0192EDFA46000932EAD /* Build configuration list for PBXProject "Coolinvoice" */;
+			buildConfigurationList = 40C4D0192EDFA46000932EAD /* Build configuration list for PBXProject "Culllinvoice" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				40C4D01D2EDFA46000932EAD /* Coolinvoice */,
-				40C4D02A2EDFA46100932EAD /* CoolinvoiceTests */,
-				40C4D0342EDFA46100932EAD /* CoolinvoiceUITests */,
+				40C4D01D2EDFA46000932EAD /* Culllinvoice */,
+				40C4D02A2EDFA46100932EAD /* CulllinvoiceTests */,
+				40C4D0342EDFA46100932EAD /* CulllinvoiceUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		40C4D02D2EDFA46100932EAD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 40C4D01D2EDFA46000932EAD /* Coolinvoice */;
+			target = 40C4D01D2EDFA46000932EAD /* Culllinvoice */;
 			targetProxy = 40C4D02C2EDFA46100932EAD /* PBXContainerItemProxy */;
 		};
 		40C4D0372EDFA46100932EAD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 40C4D01D2EDFA46000932EAD /* Coolinvoice */;
+			target = 40C4D01D2EDFA46000932EAD /* Culllinvoice */;
 			targetProxy = 40C4D0362EDFA46100932EAD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -400,6 +400,8 @@
 				DEVELOPMENT_TEAM = CYL86R5LK2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Cullinvoice;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -410,7 +412,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.Coolinvoice;
+				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.Cullinvoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -432,6 +434,8 @@
 				DEVELOPMENT_TEAM = CYL86R5LK2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Cullinvoice;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -442,7 +446,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.Coolinvoice;
+				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.Cullinvoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -458,13 +462,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CYL86R5LK2;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CoolinvoiceTests;
+				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CullinvoiceTests;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = IOSApps.Cullinvoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -472,7 +478,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Coolinvoice.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Coolinvoice";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Culllinvoice.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Culllinvoice";
 			};
 			name = Debug;
 		};
@@ -480,13 +486,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CYL86R5LK2;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CoolinvoiceTests;
+				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CullinvoiceTests;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = IOSApps.Cullinvoice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -494,19 +502,20 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Coolinvoice.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Coolinvoice";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Culllinvoice.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Culllinvoice";
 			};
 			name = Release;
 		};
 		40C4D0462EDFA46100932EAD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CYL86R5LK2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CoolinvoiceUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CullinvoiceUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -514,19 +523,20 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Coolinvoice;
+				TEST_TARGET_NAME = Cullinvoice;
 			};
 			name = Debug;
 		};
 		40C4D0472EDFA46100932EAD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = CYL86R5LK2;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CoolinvoiceUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = IOSApps.CullinvoiceUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -534,14 +544,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Coolinvoice;
+				TEST_TARGET_NAME = Cullinvoice;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		40C4D0192EDFA46000932EAD /* Build configuration list for PBXProject "Coolinvoice" */ = {
+		40C4D0192EDFA46000932EAD /* Build configuration list for PBXProject "Culllinvoice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C4D03D2EDFA46100932EAD /* Debug */,
@@ -550,7 +560,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		40C4D03F2EDFA46100932EAD /* Build configuration list for PBXNativeTarget "Coolinvoice" */ = {
+		40C4D03F2EDFA46100932EAD /* Build configuration list for PBXNativeTarget "Culllinvoice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C4D0402EDFA46100932EAD /* Debug */,
@@ -559,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		40C4D0422EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CoolinvoiceTests" */ = {
+		40C4D0422EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CulllinvoiceTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C4D0432EDFA46100932EAD /* Debug */,
@@ -568,7 +578,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		40C4D0452EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CoolinvoiceUITests" */ = {
+		40C4D0452EDFA46100932EAD /* Build configuration list for PBXNativeTarget "CulllinvoiceUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				40C4D0462EDFA46100932EAD /* Debug */,

@@ -1,6 +1,6 @@
 //
-//  CoolinvoiceApp.swift
-//  Coolinvoice
+//  CullinvoiceApp.swift
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct CoolinvoiceApp: App {
+struct CullinvoiceApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

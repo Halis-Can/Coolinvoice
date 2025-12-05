@@ -1,6 +1,6 @@
 //
 //  MoreView.swift
-//  Coolinvoice
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
@@ -68,7 +68,7 @@ struct MoreView: View {
             }
             
             Section("Support") {
-                Link(destination: URL(string: "https://help.coolinvoice.com")!) {
+                Link(destination: URL(string: "https://help.cullinvoice.com")!) {
                     Label("Help & Support", systemImage: "questionmark.circle.fill")
                 }
                 

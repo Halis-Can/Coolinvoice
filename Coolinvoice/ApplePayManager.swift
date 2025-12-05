@@ -1,6 +1,6 @@
 //
 //  ApplePayManager.swift
-//  Coolinvoice
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
@@ -26,7 +26,7 @@ class ApplePayManager: NSObject, ObservableObject {
     
     func canMakePaymentsUsingNetworks() -> Bool {
         let request = PKPaymentRequest()
-        request.merchantIdentifier = "merchant.com.coolinvoice" // Replace with your merchant ID
+        request.merchantIdentifier = "merchant.com.cullinvoice" // Replace with your merchant ID
         request.supportedNetworks = [.visa, .masterCard, .amex, .discover]
         request.merchantCapabilities = .threeDSecure
         request.countryCode = "US"
@@ -37,7 +37,7 @@ class ApplePayManager: NSObject, ObservableObject {
     
     func createPaymentRequest(amount: Double, description: String) -> PKPaymentRequest {
         let request = PKPaymentRequest()
-        request.merchantIdentifier = "merchant.com.coolinvoice" // Replace with your merchant ID
+        request.merchantIdentifier = "merchant.com.cullinvoice" // Replace with your merchant ID
         request.supportedNetworks = [.visa, .masterCard, .amex, .discover]
         request.merchantCapabilities = .threeDSecure
         request.countryCode = "US"

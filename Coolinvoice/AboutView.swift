@@ -1,6 +1,6 @@
 //
 //  AboutView.swift
-//  Coolinvoice
+//  Cullinvoice
 //
 //  Created by Ozde Can on 12/2/25.
 //
@@ -16,7 +16,7 @@ struct AboutView: View {
                         .font(.system(size: 60))
                         .foregroundStyle(.blue)
                     
-                    Text("CoolInvoice")
+                    Text("Cullinvoice")
                         .font(.title)
                         .fontWeight(.bold)
                     
@@ -44,7 +44,7 @@ struct AboutView: View {
             }
             
             Section {
-                Link(destination: URL(string: "https://coolinvoice.com")!) {
+                Link(destination: URL(string: "https://cullinvoice.com")!) {
                     HStack {
                         Label("Website", systemImage: "globe")
                         Spacer()
@@ -54,7 +54,7 @@ struct AboutView: View {
                     }
                 }
                 
-                Link(destination: URL(string: "mailto:support@coolinvoice.com")!) {
+                Link(destination: URL(string: "mailto:support@cullinvoice.com")!) {
                     HStack {
                         Label("Support", systemImage: "envelope")
                         Spacer()

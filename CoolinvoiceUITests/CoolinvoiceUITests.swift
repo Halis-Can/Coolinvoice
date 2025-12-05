@@ -1,13 +1,13 @@
 //
-//  CoolinvoiceUITests.swift
-//  CoolinvoiceUITests
+//  CullinvoiceUITests.swift
+//  CullinvoiceUITests
 //
 //  Created by Ozde Can on 12/2/25.
 //
 
 import XCTest
 
-final class CoolinvoiceUITests: XCTestCase {
+final class CullinvoiceUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

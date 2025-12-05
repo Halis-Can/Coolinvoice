@@ -1,13 +1,13 @@
 //
-//  CoolinvoiceUITestsLaunchTests.swift
-//  CoolinvoiceUITests
+//  CullinvoiceUITestsLaunchTests.swift
+//  CullinvoiceUITests
 //
 //  Created by Ozde Can on 12/2/25.
 //
 
 import XCTest
 
-final class CoolinvoiceUITestsLaunchTests: XCTestCase {
+final class CullinvoiceUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
