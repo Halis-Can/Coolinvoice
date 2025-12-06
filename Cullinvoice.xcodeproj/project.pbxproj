@@ -30,19 +30,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		40C4D0202EDFA46000932EAD /* Coolinvoice */ = {
+		40C4D0202EDFA46000932EAD /* Cullinvoice */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Coolinvoice;
+			path = Cullinvoice;
 			sourceTree = "<group>";
 		};
-		40C4D02E2EDFA46100932EAD /* CoolinvoiceTests */ = {
+		40C4D02E2EDFA46100932EAD /* CullinvoiceTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CoolinvoiceTests;
+			path = CullinvoiceTests;
 			sourceTree = "<group>";
 		};
-		40C4D0382EDFA46100932EAD /* CoolinvoiceUITests */ = {
+		40C4D0382EDFA46100932EAD /* CullinvoiceUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CoolinvoiceUITests;
+			path = CullinvoiceUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		40C4D0152EDFA46000932EAD = {
 			isa = PBXGroup;
 			children = (
-				40C4D0202EDFA46000932EAD /* Coolinvoice */,
-				40C4D02E2EDFA46100932EAD /* CoolinvoiceTests */,
-				40C4D0382EDFA46100932EAD /* CoolinvoiceUITests */,
+				40C4D0202EDFA46000932EAD /* Cullinvoice */,
+				40C4D02E2EDFA46100932EAD /* CullinvoiceTests */,
+				40C4D0382EDFA46100932EAD /* CullinvoiceUITests */,
 				40C4D01F2EDFA46000932EAD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,7 +108,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				40C4D0202EDFA46000932EAD /* Coolinvoice */,
+				40C4D0202EDFA46000932EAD /* Cullinvoice */,
 			);
 			name = Cullinvoice;
 			packageProductDependencies = (
@@ -131,7 +131,7 @@
 				40C4D02D2EDFA46100932EAD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				40C4D02E2EDFA46100932EAD /* CoolinvoiceTests */,
+				40C4D02E2EDFA46100932EAD /* CullinvoiceTests */,
 			);
 			name = CullinvoiceTests;
 			packageProductDependencies = (
@@ -154,7 +154,7 @@
 				40C4D0372EDFA46100932EAD /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				40C4D0382EDFA46100932EAD /* CoolinvoiceUITests */,
+				40C4D0382EDFA46100932EAD /* CullinvoiceUITests */,
 			);
 			name = CullinvoiceUITests;
 			packageProductDependencies = (
