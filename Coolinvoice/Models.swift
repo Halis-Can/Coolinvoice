@@ -30,6 +30,9 @@ struct Invoice: Identifiable, Codable, Equatable {
     var paymentMethod: PaymentMethod?
     var paidDate: Date?
     var paymentAmount: Double?
+    var showQuantity: Bool = true
+    var showPrice: Bool = true
+    var showTotal: Bool = true
     
     var remainingAmount: Double {
         guard let paymentAmount = paymentAmount else {
@@ -54,7 +57,10 @@ struct Invoice: Identifiable, Codable, Equatable {
         notes: String = "",
         paymentMethod: PaymentMethod? = nil,
         paidDate: Date? = nil,
-        paymentAmount: Double? = nil
+        paymentAmount: Double? = nil,
+        showQuantity: Bool = true,
+        showPrice: Bool = true,
+        showTotal: Bool = true
     ) {
         self.id = id
         self.invoiceNumber = invoiceNumber
@@ -72,6 +78,9 @@ struct Invoice: Identifiable, Codable, Equatable {
         self.paymentMethod = paymentMethod
         self.paidDate = paidDate
         self.paymentAmount = paymentAmount
+        self.showQuantity = showQuantity
+        self.showPrice = showPrice
+        self.showTotal = showTotal
     }
     
     static func == (lhs: Invoice, rhs: Invoice) -> Bool {
@@ -90,7 +99,10 @@ struct Invoice: Identifiable, Codable, Equatable {
         lhs.notes == rhs.notes &&
         lhs.paymentMethod == rhs.paymentMethod &&
         lhs.paidDate == rhs.paidDate &&
-        lhs.paymentAmount == rhs.paymentAmount
+        lhs.paymentAmount == rhs.paymentAmount &&
+        lhs.showQuantity == rhs.showQuantity &&
+        lhs.showPrice == rhs.showPrice &&
+        lhs.showTotal == rhs.showTotal
     }
 }
 
@@ -174,6 +186,9 @@ struct Estimate: Identifiable, Codable, Equatable {
     var status: EstimateStatus
     var items: [InvoiceItem]
     var notes: String
+    var showQuantity: Bool = true
+    var showPrice: Bool = true
+    var showTotal: Bool = true
     
     init(
         id: UUID = UUID(),
@@ -188,7 +203,10 @@ struct Estimate: Identifiable, Codable, Equatable {
         expiryDate: Date? = nil,
         status: EstimateStatus = .pending,
         items: [InvoiceItem] = [],
-        notes: String = ""
+        notes: String = "",
+        showQuantity: Bool = true,
+        showPrice: Bool = true,
+        showTotal: Bool = true
     ) {
         self.id = id
         self.estimateNumber = estimateNumber
@@ -203,6 +221,9 @@ struct Estimate: Identifiable, Codable, Equatable {
         self.status = status
         self.items = items
         self.notes = notes
+        self.showQuantity = showQuantity
+        self.showPrice = showPrice
+        self.showTotal = showTotal
     }
     
     static func == (lhs: Estimate, rhs: Estimate) -> Bool {
@@ -218,7 +239,10 @@ struct Estimate: Identifiable, Codable, Equatable {
         lhs.expiryDate == rhs.expiryDate &&
         lhs.status == rhs.status &&
         lhs.items == rhs.items &&
-        lhs.notes == rhs.notes
+        lhs.notes == rhs.notes &&
+        lhs.showQuantity == rhs.showQuantity &&
+        lhs.showPrice == rhs.showPrice &&
+        lhs.showTotal == rhs.showTotal
     }
 }
 

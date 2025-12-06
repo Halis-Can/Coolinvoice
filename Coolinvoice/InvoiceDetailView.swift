@@ -216,11 +216,17 @@ struct InvoiceDetailView: View {
             }
         }
         .sheet(isPresented: $showingEditSheet) {
-            // Edit invoice view would go here
-            Text("Edit Invoice")
+            EditInvoiceView(invoice: $invoice) {
+                // Update totals after editing
+                let subtotal = invoice.items.reduce(0) { $0 + $1.total }
+                invoice.amount = subtotal
+                invoice.tax = TaxSettingsManager.shared.calculateTax(for: subtotal)
+            }
         }
         .sheet(isPresented: $showingTemplateView) {
-            PrintReadyInvoiceView(invoice: invoice)
+            PrintReadyInvoiceView(invoice: invoice) { updatedInvoice in
+                invoice = updatedInvoice
+            }
         }
         .sheet(isPresented: $showingAddItem) {
             AddInvoiceItemView { item in

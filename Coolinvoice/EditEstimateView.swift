@@ -112,6 +112,16 @@ struct EditEstimateView: View {
                 } header: {
                     Text("Notes")
                 }
+                
+                Section {
+                    Toggle("Show Quantity", isOn: $estimate.showQuantity)
+                    Toggle("Show Price", isOn: $estimate.showPrice)
+                    Toggle("Show Total", isOn: $estimate.showTotal)
+                } header: {
+                    Text("Display Options")
+                } footer: {
+                    Text("Choose which columns to display in the PDF view.")
+                }
             }
             .navigationTitle("Edit Estimate")
             .navigationBarTitleDisplayMode(.inline)

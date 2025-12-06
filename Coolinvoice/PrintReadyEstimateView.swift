@@ -8,13 +8,21 @@
 import SwiftUI
 
 struct PrintReadyEstimateView: View {
-    let estimate: Estimate
+    @State private var estimate: Estimate
     @StateObject private var businessManager = BusinessManager.shared
     @State private var viewMode: ViewMode = .mobile
     @Environment(\.dismiss) private var dismiss
     @State private var showingShareSheet = false
     @State private var showingInvoiceView = false
     @State private var showingMoreOptions = false
+    @State private var showingEditView = false
+    
+    let onUpdate: ((Estimate) -> Void)?
+    
+    init(estimate: Estimate, onUpdate: ((Estimate) -> Void)? = nil) {
+        _estimate = State(initialValue: estimate)
+        self.onUpdate = onUpdate
+    }
     
     enum ViewMode: String, CaseIterable {
         case mobile = "Mobile"
@@ -78,6 +86,13 @@ struct PrintReadyEstimateView: View {
                         dismiss()
                     }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingEditView = true
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                }
             }
             .sheet(isPresented: $showingShareSheet) {
                 ShareSheet(items: [generateEstimatePDF()])
@@ -90,6 +105,12 @@ struct PrintReadyEstimateView: View {
             }
             .sheet(isPresented: $showingMoreOptions) {
                 EstimateMoreOptionsView(estimate: estimate)
+            }
+            .sheet(isPresented: $showingEditView) {
+                EditEstimateView(estimate: $estimate) {
+                    // Estimate updated, notify parent
+                    onUpdate?(estimate)
+                }
             }
         }
     }
@@ -118,6 +139,44 @@ struct EstimateTemplateContentView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: viewMode == .web ? 40 : 24) {
+            // Estimate Header - At the top
+            HStack {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("ESTIMATE")
+                        .font(viewMode == .web ? .system(size: 38.4, weight: .bold) : .system(size: 27.2, weight: .bold))
+                        .fontWeight(.bold)
+                    Text(estimate.estimateNumber)
+                        .font(viewMode == .web ? .title2 : .title3)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 12) {
+                    HStack {
+                        Text("Status:")
+                            .foregroundStyle(.secondary)
+                        EstimateStatusBadge(status: estimate.status)
+                    }
+                    
+                    HStack {
+                        Text("Date:")
+                            .foregroundStyle(.secondary)
+                        Text(estimate.date, format: .dateTime.month().day().year())
+                    }
+                    
+                    HStack {
+                        Text("Expiry:")
+                            .foregroundStyle(.secondary)
+                        Text(estimate.expiryDate, format: .dateTime.month().day().year())
+                    }
+                }
+                .font(viewMode == .web ? .body : .subheadline)
+            }
+            
+            Divider()
+                .padding(.vertical, viewMode == .web ? 16 : 8)
+            
             // Header with Logo and Business Info
             VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .top, spacing: 20) {
@@ -166,41 +225,6 @@ struct EstimateTemplateContentView: View {
             Divider()
                 .padding(.vertical, viewMode == .web ? 16 : 8)
             
-            // Estimate Header
-            HStack {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("ESTIMATE")
-                        .font(viewMode == .web ? .system(size: 48, weight: .bold) : .largeTitle)
-                        .fontWeight(.bold)
-                    Text(estimate.estimateNumber)
-                        .font(viewMode == .web ? .title2 : .title3)
-                        .foregroundStyle(.secondary)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 12) {
-                    HStack {
-                        Text("Status:")
-                            .foregroundStyle(.secondary)
-                        EstimateStatusBadge(status: estimate.status)
-                    }
-                    
-                    HStack {
-                        Text("Date:")
-                            .foregroundStyle(.secondary)
-                        Text(estimate.date, format: .dateTime.month().day().year())
-                    }
-                    
-                    HStack {
-                        Text("Expiry:")
-                            .foregroundStyle(.secondary)
-                        Text(estimate.expiryDate, format: .dateTime.month().day().year())
-                    }
-                }
-                .font(viewMode == .web ? .body : .subheadline)
-            }
-            
             Divider()
                 .padding(.vertical, viewMode == .web ? 16 : 8)
             
@@ -233,18 +257,24 @@ struct EstimateTemplateContentView: View {
                             .font(viewMode == .web ? .title3 : .headline)
                             .fontWeight(.semibold)
                         Spacer()
-                        Text("Qty")
-                            .font(viewMode == .web ? .title3 : .headline)
-                            .fontWeight(.semibold)
-                            .frame(width: viewMode == .web ? 80 : 60)
-                        Text("Price")
-                            .font(viewMode == .web ? .title3 : .headline)
-                            .fontWeight(.semibold)
-                            .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
-                        Text("Total")
-                            .font(viewMode == .web ? .title3 : .headline)
-                            .fontWeight(.semibold)
-                            .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                        if estimate.showQuantity {
+                            Text("Qty")
+                                .font(viewMode == .web ? .title3 : .headline)
+                                .fontWeight(.semibold)
+                                .frame(width: viewMode == .web ? 80 : 60)
+                        }
+                        if estimate.showPrice {
+                            Text("Price")
+                                .font(viewMode == .web ? .title3 : .headline)
+                                .fontWeight(.semibold)
+                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                        }
+                        if estimate.showTotal {
+                            Text("Total")
+                                .font(viewMode == .web ? .title3 : .headline)
+                                .fontWeight(.semibold)
+                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                        }
                     }
                     .padding(viewMode == .web ? 16 : 12)
                     .background(Color(.systemGray6))
@@ -256,16 +286,22 @@ struct EstimateTemplateContentView: View {
                             Text(item.description)
                                 .font(viewMode == .web ? .body : .subheadline)
                             Spacer()
-                            Text(item.quantity, format: .number)
-                                .font(viewMode == .web ? .body : .subheadline)
-                                .frame(width: viewMode == .web ? 80 : 60)
-                            Text(item.unitPrice, format: .currency(code: "USD"))
-                                .font(viewMode == .web ? .body : .subheadline)
-                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
-                            Text(item.total, format: .currency(code: "USD"))
-                                .font(viewMode == .web ? .body : .subheadline)
-                                .fontWeight(.semibold)
-                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                            if estimate.showQuantity {
+                                Text(item.quantity, format: .number)
+                                    .font(viewMode == .web ? .body : .subheadline)
+                                    .frame(width: viewMode == .web ? 80 : 60)
+                            }
+                            if estimate.showPrice {
+                                Text(item.unitPrice, format: .currency(code: "USD"))
+                                    .font(viewMode == .web ? .body : .subheadline)
+                                    .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                            }
+                            if estimate.showTotal {
+                                Text(item.total, format: .currency(code: "USD"))
+                                    .font(viewMode == .web ? .body : .subheadline)
+                                    .fontWeight(.semibold)
+                                    .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                            }
                         }
                         .padding(viewMode == .web ? 16 : 12)
                         

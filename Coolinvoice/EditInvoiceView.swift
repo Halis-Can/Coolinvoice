@@ -108,6 +108,16 @@ struct EditInvoiceView: View {
                 } header: {
                     Text("Notes")
                 }
+                
+                Section {
+                    Toggle("Show Quantity", isOn: $invoice.showQuantity)
+                    Toggle("Show Price", isOn: $invoice.showPrice)
+                    Toggle("Show Total", isOn: $invoice.showTotal)
+                } header: {
+                    Text("Display Options")
+                } footer: {
+                    Text("Choose which columns to display in the PDF view.")
+                }
             }
             .navigationTitle("Edit Invoice")
             .navigationBarTitleDisplayMode(.inline)

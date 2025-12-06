@@ -285,7 +285,9 @@ struct EstimateDetailView: View {
             }
         }
         .sheet(isPresented: $showingTemplateView) {
-            PrintReadyEstimateView(estimate: estimate)
+            PrintReadyEstimateView(estimate: estimate) { updatedEstimate in
+                estimate = updatedEstimate
+            }
         }
     }
 }

@@ -15,6 +15,8 @@ struct NewInvoiceView: View {
     @State private var clientAddress: String = ""
     @State private var invoiceItems: [InvoiceItem] = []
     @State private var showingAddItem = false
+    @State private var editingItem: InvoiceItem?
+    @State private var showingEditItem = false
     @State private var invoiceNumber: String = ""
     @State private var invoiceDate: Date = Date()
     @State private var dueDate: Date = Date()
@@ -87,7 +89,10 @@ struct NewInvoiceView: View {
                 
                 Section {
                     ForEach(invoiceItems) { item in
-                        InvoiceItemEditRow(item: item)
+                        InvoiceItemEditRow(item: item) {
+                            editingItem = item
+                            showingEditItem = true
+                        }
                     }
                     .onDelete { indexSet in
                         invoiceItems.remove(atOffsets: indexSet)
@@ -134,6 +139,20 @@ struct NewInvoiceView: View {
                 AddInvoiceItemView { item in
                     invoiceItems.append(item)
                     updateTotals()
+                }
+            }
+            .sheet(isPresented: $showingEditItem) {
+                if let item = editingItem {
+                    AddInvoiceItemView(editingItem: item) { updatedItem in
+                        if let index = invoiceItems.firstIndex(where: { $0.id == item.id }) {
+                            invoiceItems[index] = updatedItem
+                            updateTotals()
+                        }
+                        editingItem = nil
+                    }
+                } else {
+                    // Fallback - should not happen
+                    Text("Error loading item")
                 }
             }
             .alert("Invoice Created", isPresented: $showingDoneAlert) {

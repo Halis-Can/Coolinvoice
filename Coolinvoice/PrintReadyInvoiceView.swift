@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PrintReadyInvoiceView: View {
-    let invoice: Invoice
+    @State private var invoice: Invoice
     @StateObject private var businessManager = BusinessManager.shared
     @State private var viewMode: ViewMode = .mobile
     @Environment(\.dismiss) private var dismiss
@@ -16,6 +16,14 @@ struct PrintReadyInvoiceView: View {
     @State private var showingTapToPay = false
     @State private var showingPaymentView = false
     @State private var showingMoreOptions = false
+    @State private var showingEditView = false
+    
+    let onUpdate: ((Invoice) -> Void)?
+    
+    init(invoice: Invoice, onUpdate: ((Invoice) -> Void)? = nil) {
+        _invoice = State(initialValue: invoice)
+        self.onUpdate = onUpdate
+    }
     
     enum ViewMode: String, CaseIterable {
         case mobile = "Mobile"
@@ -77,13 +85,6 @@ struct PrintReadyInvoiceView: View {
             }
             .navigationTitle("Invoice")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        dismiss()
-                    }
-                }
-            }
             .sheet(isPresented: $showingShareSheet) {
                 ShareSheet(items: [generateInvoicePDF()])
             }
@@ -95,6 +96,26 @@ struct PrintReadyInvoiceView: View {
             }
             .sheet(isPresented: $showingMoreOptions) {
                 InvoiceMoreOptionsView(invoice: invoice)
+            }
+            .sheet(isPresented: $showingEditView) {
+                EditInvoiceView(invoice: $invoice) {
+                    // Invoice updated, notify parent
+                    onUpdate?(invoice)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showingEditView = true
+                    } label: {
+                        Label("Edit", systemImage: "pencil")
+                    }
+                }
             }
         }
     }
@@ -126,6 +147,44 @@ struct InvoiceTemplateContentView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: viewMode == .web ? 40 : 24) {
+            // Invoice Header - At the top
+            HStack {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("INVOICE")
+                        .font(viewMode == .web ? .system(size: 38.4, weight: .bold) : .system(size: 27.2, weight: .bold))
+                        .fontWeight(.bold)
+                    Text(invoice.invoiceNumber)
+                        .font(viewMode == .web ? .title2 : .title3)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 12) {
+                    HStack {
+                        Text("Status:")
+                            .foregroundStyle(.secondary)
+                        StatusBadge(status: invoice.status)
+                    }
+                    
+                    HStack {
+                        Text("Date:")
+                            .foregroundStyle(.secondary)
+                        Text(invoice.date, format: .dateTime.month().day().year())
+                    }
+                    
+                    HStack {
+                        Text("Due Date:")
+                            .foregroundStyle(.secondary)
+                        Text(invoice.dueDate, format: .dateTime.month().day().year())
+                    }
+                }
+                .font(viewMode == .web ? .body : .subheadline)
+            }
+            
+            Divider()
+                .padding(.vertical, viewMode == .web ? 16 : 8)
+            
             // Header with Logo and Business Info
             VStack(alignment: .leading, spacing: 16) {
                 // Logo Section - Top Left
@@ -176,41 +235,6 @@ struct InvoiceTemplateContentView: View {
             Divider()
                 .padding(.vertical, viewMode == .web ? 16 : 8)
             
-            // Invoice Header
-            HStack {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("INVOICE")
-                        .font(viewMode == .web ? .system(size: 48, weight: .bold) : .largeTitle)
-                        .fontWeight(.bold)
-                    Text(invoice.invoiceNumber)
-                        .font(viewMode == .web ? .title2 : .title3)
-                        .foregroundStyle(.secondary)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 12) {
-                    HStack {
-                        Text("Status:")
-                            .foregroundStyle(.secondary)
-                        StatusBadge(status: invoice.status)
-                    }
-                    
-                    HStack {
-                        Text("Date:")
-                            .foregroundStyle(.secondary)
-                        Text(invoice.date, format: .dateTime.month().day().year())
-                    }
-                    
-                    HStack {
-                        Text("Due Date:")
-                            .foregroundStyle(.secondary)
-                        Text(invoice.dueDate, format: .dateTime.month().day().year())
-                    }
-                }
-                .font(viewMode == .web ? .body : .subheadline)
-            }
-            
             Divider()
                 .padding(.vertical, viewMode == .web ? 16 : 8)
             
@@ -250,18 +274,24 @@ struct InvoiceTemplateContentView: View {
                             .font(viewMode == .web ? .title3 : .headline)
                             .fontWeight(.semibold)
                         Spacer()
-                        Text("Qty")
-                            .font(viewMode == .web ? .title3 : .headline)
-                            .fontWeight(.semibold)
-                            .frame(width: viewMode == .web ? 80 : 60)
-                        Text("Price")
-                            .font(viewMode == .web ? .title3 : .headline)
-                            .fontWeight(.semibold)
-                            .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
-                        Text("Total")
-                            .font(viewMode == .web ? .title3 : .headline)
-                            .fontWeight(.semibold)
-                            .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                        if invoice.showQuantity {
+                            Text("Qty")
+                                .font(viewMode == .web ? .title3 : .headline)
+                                .fontWeight(.semibold)
+                                .frame(width: viewMode == .web ? 80 : 60)
+                        }
+                        if invoice.showPrice {
+                            Text("Price")
+                                .font(viewMode == .web ? .title3 : .headline)
+                                .fontWeight(.semibold)
+                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                        }
+                        if invoice.showTotal {
+                            Text("Total")
+                                .font(viewMode == .web ? .title3 : .headline)
+                                .fontWeight(.semibold)
+                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                        }
                     }
                     .padding(viewMode == .web ? 16 : 12)
                     .background(Color(.systemGray6))
@@ -274,16 +304,22 @@ struct InvoiceTemplateContentView: View {
                             Text(item.description)
                                 .font(viewMode == .web ? .body : .subheadline)
                             Spacer()
-                            Text(item.quantity, format: .number)
-                                .font(viewMode == .web ? .body : .subheadline)
-                                .frame(width: viewMode == .web ? 80 : 60)
-                            Text(item.unitPrice, format: .currency(code: "USD"))
-                                .font(viewMode == .web ? .body : .subheadline)
-                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
-                            Text(item.total, format: .currency(code: "USD"))
-                                .font(viewMode == .web ? .body : .subheadline)
-                                .fontWeight(.semibold)
-                                .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                            if invoice.showQuantity {
+                                Text(item.quantity, format: .number)
+                                    .font(viewMode == .web ? .body : .subheadline)
+                                    .frame(width: viewMode == .web ? 80 : 60)
+                            }
+                            if invoice.showPrice {
+                                Text(item.unitPrice, format: .currency(code: "USD"))
+                                    .font(viewMode == .web ? .body : .subheadline)
+                                    .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                            }
+                            if invoice.showTotal {
+                                Text(item.total, format: .currency(code: "USD"))
+                                    .font(viewMode == .web ? .body : .subheadline)
+                                    .fontWeight(.semibold)
+                                    .frame(width: viewMode == .web ? 120 : 100, alignment: .trailing)
+                            }
                         }
                         .padding(viewMode == .web ? 16 : 12)
                         
