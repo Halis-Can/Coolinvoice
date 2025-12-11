@@ -167,6 +167,7 @@ struct BusinessProfileView: View {
 // MARK: - Logout View
 
 struct LogoutView: View {
+    @EnvironmentObject var authManager: FirebaseAuthManager
     @Environment(\.dismiss) private var dismiss
     @State private var showingAlert = false
     
@@ -186,7 +187,12 @@ struct LogoutView: View {
                 .multilineTextAlignment(.center)
             
             Button(role: .destructive) {
-                showingAlert = true
+                do {
+                    try authManager.signOut()
+                    dismiss()
+                } catch {
+                    showingAlert = true
+                }
             } label: {
                 Text("Sign Out")
                     .fontWeight(.semibold)
@@ -216,12 +222,10 @@ struct LogoutView: View {
         .padding()
         .navigationTitle("Sign Out")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Signed Out", isPresented: $showingAlert) {
-            Button("OK") {
-                dismiss()
-            }
+        .alert("Error", isPresented: $showingAlert) {
+            Button("OK") { }
         } message: {
-            Text("You have been signed out successfully.")
+            Text("Failed to sign out. Please try again.")
         }
     }
 }

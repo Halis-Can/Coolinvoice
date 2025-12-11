@@ -142,8 +142,9 @@ struct PDFInvoiceView: View {
 
 struct PDFEstimateView: View {
     @State private var estimate: Estimate
-    @Binding var invoices: [Invoice]
+    @StateObject private var invoiceService = FirebaseInvoiceService.shared
     @StateObject private var businessManager = BusinessManager.shared
+    @EnvironmentObject var dataManager: FirebaseDataManager
     @State private var pdfDocument: PDFDocument?
     @Environment(\.dismiss) private var dismiss
     @State private var showingShareSheet = false
@@ -154,9 +155,12 @@ struct PDFEstimateView: View {
     
     let onUpdate: ((Estimate) -> Void)?
     
+    var invoices: [Invoice] {
+        invoiceService.invoices
+    }
+    
     init(estimate: Estimate, invoices: Binding<[Invoice]>, onUpdate: ((Estimate) -> Void)? = nil) {
         _estimate = State(initialValue: estimate)
-        _invoices = invoices
         self.onUpdate = onUpdate
     }
     
@@ -231,7 +235,11 @@ struct PDFEstimateView: View {
             }
             .sheet(isPresented: $showingInvoiceView) {
                 EstimateToInvoiceView(estimate: estimate, existingInvoices: invoices) { invoice in
-                    invoices.append(invoice)
+                    Task {
+                        if let userId = dataManager.userId {
+                            try? await invoiceService.addInvoice(invoice, userId: userId)
+                        }
+                    }
                     showingInvoiceView = false
                 }
             }

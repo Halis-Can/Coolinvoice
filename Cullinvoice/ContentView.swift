@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var invoices: [Invoice] = Invoice.sampleInvoices
+    @EnvironmentObject var dataManager: FirebaseDataManager
     @State private var selectedTab = 0
     
     var body: some View {
         TabView(selection: $selectedTab) {
             // Estimates Tab
             NavigationStack {
-                EstimateView(invoices: $invoices)
+                EstimateView()
             }
             .tabItem {
                 Label("Estimate", systemImage: "doc.fill")
@@ -24,7 +24,7 @@ struct ContentView: View {
             
             // Invoices Tab
             NavigationStack {
-                InvoiceListView(invoices: $invoices)
+                InvoiceListView()
             }
             .tabItem {
                 Label("Invoice", systemImage: "doc.text.fill")
@@ -62,10 +62,15 @@ struct ContentView: View {
 }
 
 struct InvoiceListView: View {
-    @Binding var invoices: [Invoice]
+    @EnvironmentObject var dataManager: FirebaseDataManager
+    @StateObject private var invoiceService = FirebaseInvoiceService.shared
     @State private var selectedSegment: InvoiceSegment = .active
     @State private var searchText = ""
     @State private var showingNewInvoice = false
+    
+    var invoices: [Invoice] {
+        invoiceService.invoices
+    }
     
     enum InvoiceSegment: String, CaseIterable {
         case active = "Active"
@@ -117,8 +122,10 @@ struct InvoiceListView: View {
                     ForEach(filteredInvoices) { invoice in
                         NavigationLink {
                             PDFInvoiceView(invoice: invoice) { updatedInvoice in
-                                if let index = invoices.firstIndex(where: { $0.id == updatedInvoice.id }) {
-                                    invoices[index] = updatedInvoice
+                                Task {
+                                    if let userId = dataManager.userId {
+                                        try? await invoiceService.updateInvoice(updatedInvoice, userId: userId)
+                                    }
                                 }
                             }
                         } label: {
@@ -143,7 +150,11 @@ struct InvoiceListView: View {
         }
         .sheet(isPresented: $showingNewInvoice) {
             NewInvoiceView(existingInvoices: invoices) { invoice in
-                invoices.append(invoice)
+                Task {
+                    if let userId = dataManager.userId {
+                        try? await invoiceService.addInvoice(invoice, userId: userId)
+                    }
+                }
             }
         }
     }
@@ -197,4 +208,5 @@ struct InvoiceRow: View {
 
 #Preview {
     ContentView()
+        .environmentObject(FirebaseDataManager.shared)
 }

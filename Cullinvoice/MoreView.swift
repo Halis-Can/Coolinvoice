@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MoreView: View {
+    @EnvironmentObject var authManager: FirebaseAuthManager
     @StateObject private var businessManager = BusinessManager.shared
     @State private var showingLogoutSheet = false
     
@@ -91,6 +92,7 @@ struct MoreView: View {
         .sheet(isPresented: $showingLogoutSheet) {
             NavigationStack {
                 LogoutView()
+                    .environmentObject(authManager)
             }
         }
     }

@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct EstimateView: View {
-    @State private var estimates: [Estimate] = Estimate.sampleEstimates
-    @Binding var invoices: [Invoice]
+    @EnvironmentObject var dataManager: FirebaseDataManager
+    @StateObject private var estimateService = FirebaseEstimateService.shared
+    @StateObject private var invoiceService = FirebaseInvoiceService.shared
     @State private var selectedSegment: EstimateSegment = .pending
     @State private var searchText = ""
     @State private var showingNewEstimate = false
+    
+    var estimates: [Estimate] {
+        estimateService.estimates
+    }
+    
+    var invoices: [Invoice] {
+        invoiceService.invoices
+    }
     
     enum EstimateSegment: String, CaseIterable {
         case pending = "Pending"
@@ -66,9 +75,14 @@ struct EstimateView: View {
                 } else {
                     ForEach(filteredEstimates) { estimate in
                         NavigationLink {
-                            PDFEstimateView(estimate: estimate, invoices: $invoices) { updatedEstimate in
-                                if let index = estimates.firstIndex(where: { $0.id == updatedEstimate.id }) {
-                                    estimates[index] = updatedEstimate
+                            PDFEstimateView(estimate: estimate, invoices: Binding(
+                                get: { invoiceService.invoices },
+                                set: { _ in }
+                            )) { updatedEstimate in
+                                Task {
+                                    if let userId = dataManager.userId {
+                                        try? await estimateService.updateEstimate(updatedEstimate, userId: userId)
+                                    }
                                 }
                             }
                         } label: {
@@ -93,7 +107,11 @@ struct EstimateView: View {
         }
         .sheet(isPresented: $showingNewEstimate) {
             NewEstimateView { estimate in
-                estimates.append(estimate)
+                Task {
+                    if let userId = dataManager.userId {
+                        try? await estimateService.addEstimate(estimate, userId: userId)
+                    }
+                }
             }
         }
     }
@@ -167,7 +185,7 @@ struct EstimateRow: View {
 }
 
 struct EstimateDetailView: View {
-    let estimate: Estimate
+    @State var estimate: Estimate
     @Environment(\.dismiss) private var dismiss
     @State private var showingTemplateView = false
     
@@ -329,7 +347,8 @@ struct EstimateInfoRow: View {
 
 #Preview {
     NavigationStack {
-        EstimateView(invoices: .constant([]))
+        EstimateView()
+            .environmentObject(FirebaseDataManager.shared)
     }
 }
 

@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct ClientsView: View {
-    @State private var clients: [Client] = Client.sampleClients
+    @EnvironmentObject var dataManager: FirebaseDataManager
+    @StateObject private var clientService = FirebaseClientService.shared
     @State private var searchText = ""
     @State private var showingNewClient = false
+    
+    var clients: [Client] {
+        clientService.clients
+    }
     
     var filteredClients: [Client] {
         if searchText.isEmpty {

@@ -49,13 +49,16 @@ class BusinessManager: ObservableObject {
     
     @Published var business: Business {
         didSet {
-            saveBusiness()
+            saveBusinessLocally()
+            saveBusinessToFirebase()
         }
     }
     
     private let businessKey = "savedBusiness"
+    private let businessService = FirebaseBusinessService.shared
     
     private init() {
+        // Load from UserDefaults first (for offline support)
         if let data = UserDefaults.standard.data(forKey: businessKey),
            let decoded = try? JSONDecoder().decode(Business.self, from: data) {
             self.business = decoded
@@ -66,11 +69,24 @@ class BusinessManager: ObservableObject {
                 licenseNumber: ""
             )
         }
+        
+        // Sync with Firebase if available
+        if let firebaseBusiness = businessService.business {
+            self.business = firebaseBusiness
+        }
     }
     
-    private func saveBusiness() {
+    private func saveBusinessLocally() {
         if let encoded = try? JSONEncoder().encode(business) {
             UserDefaults.standard.set(encoded, forKey: businessKey)
+        }
+    }
+    
+    private func saveBusinessToFirebase() {
+        if let userId = FirebaseAuthManager.shared.userId {
+            Task {
+                try? await businessService.saveBusiness(business, userId: userId)
+            }
         }
     }
     

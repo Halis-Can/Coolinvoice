@@ -9,7 +9,9 @@ import SwiftUI
 import PassKit
 
 struct PaymentView: View {
-    @State private var payments: [Payment] = Payment.samplePayments
+    @EnvironmentObject var dataManager: FirebaseDataManager
+    @StateObject private var paymentService = FirebasePaymentService.shared
+    @StateObject private var invoiceService = FirebaseInvoiceService.shared
     @State private var searchText = ""
     @State private var selectedMethod: PaymentMethod?
     @State private var showingNewPayment = false
@@ -19,6 +21,10 @@ struct PaymentView: View {
     @StateObject private var applePayManager = ApplePayManager.shared
     @StateObject private var tapToPayManager = TapToPayManager.shared
     @State private var paymentAmount: Double = 0.0
+    
+    var payments: [Payment] {
+        paymentService.payments
+    }
     
     var filteredPayments: [Payment] {
         var filtered = payments
@@ -523,8 +529,11 @@ struct TapToPaySheet: View {
 struct NewPaymentView: View {
     let onSelectInvoice: (Invoice) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var invoices: [Invoice] = Invoice.sampleInvoices
-        .filter { $0.status == .active }
+    @StateObject private var invoiceService = FirebaseInvoiceService.shared
+    
+    var invoices: [Invoice] {
+        invoiceService.invoices.filter { $0.status == .active }
+    }
     
     var body: some View {
         NavigationStack {
